@@ -1,2 +1,5 @@
 **/__pycache__
 **/.env*
+.ruff_cache/
+**/darts_logs/
+**/outputs/*
