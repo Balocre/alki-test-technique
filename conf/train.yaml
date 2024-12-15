@@ -1,0 +1,2 @@
+parameters:
+  epochs: 600

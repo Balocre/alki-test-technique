@@ -1,0 +1,4 @@
+filters:
+  CUSTOMER: ["ARGALYS", "LES MIRACULEUX", "MINCI DELICE", "NUTRAVANCE"]
+  _measurement: [customer_quantity]
+  _field: ["QUANTITY"]

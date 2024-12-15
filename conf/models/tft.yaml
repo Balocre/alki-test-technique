@@ -1,0 +1,11 @@
+# @package _global_
+
+model:
+  _target_: darts.models.TFTModel
+  input_chunk_length: 24
+  output_chunk_length: 12
+  hidden_size: 512
+  lstm_layers: 1
+  num_attention_heads: 4
+  full_attention: False
+  dropout: 0.1

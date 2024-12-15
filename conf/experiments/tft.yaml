@@ -1,0 +1,36 @@
+# @package _global_
+
+defaults:
+  - /models/tft
+  - /losses/quantile_regression
+
+train:
+  epochs: 600
+
+mape:
+  _target_: torchmetrics.MeanAbsolutePercentageError
+
+early_stopping:
+  _target_: pytorch_lightning.callbacks.EarlyStopping
+  monitor: val_MeanAbsolutePercentageError
+  patience: 50
+  min_delta: 0.05
+  mode: min
+
+model:
+  batch_size: 512
+  add_relative_index: False
+  add_encoders:
+    cyclic: {future: [month]}
+    datetime_attribute: {future: [dayofweek]}
+    transformer:
+      _target_: darts.dataprocessing.transformers.Scaler
+  random_state: 42
+  log_tensorboard: True
+  torch_metrics:
+    ${mape}
+  optimizer_kwargs:
+    lr: 0.001
+  pl_trainer_kwargs:
+    callbacks:
+      - ${early_stopping}
