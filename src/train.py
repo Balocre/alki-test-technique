@@ -65,7 +65,7 @@ def fit(
     )
 
 
-def eval(model, series, series_val, n, num_samples):
+def eval(model, series, series_val, n, num_samples, backtest=True):
     # encode static covariates (customer names) as int
     static_covariate_transformer = StaticCovariatesTransformer()
 
@@ -100,3 +100,15 @@ def eval(model, series, series_val, n, num_samples):
         plt.title("MAPE: {:.2f}%".format(m))
         plt.legend()
         plt.show()
+
+    if backtest:
+        metric = model.backtest(
+            series,
+            start=0.8,
+            num_samples=num_samples,
+            forecast_horizon=30,
+            retrain=False,
+            metric=mape,
+        )
+
+        print("Backtest results with MAPE :", metric)
