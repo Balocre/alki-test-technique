@@ -13,7 +13,7 @@ def fit(
     epochs,
     missing_sample_weight=0.05,
     fill_missing_values=True,
-    training_cutoff=0.8,
+    test_size=0.2,
 ):
     series_group = TimeSeries.from_group_dataframe(
         data_df,
@@ -43,7 +43,7 @@ def fit(
 
     series_train, series_val = train_test_split(
         series_group,
-        test_size=0.2,
+        test_size=test_size,
         axis=1,
         input_size=input_size,
         horizon=horizon,
@@ -52,7 +52,7 @@ def fit(
 
     sample_weight_train, sample_weight_val = train_test_split(
         sample_weight_group,
-        test_size=0.2,
+        test_size=test_size,
         axis=1,
         input_size=input_size,
         horizon=horizon,
