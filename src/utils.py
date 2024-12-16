@@ -10,7 +10,6 @@ def get_missing_dates_in_df_dt_index(dataframe):
 
 
 def build_sample_weights(series, weight=0.05):
-    print(series)
     series_na_mask = series.pd_dataframe().isna()
 
     sample_weight = np.ones(series.shape)
