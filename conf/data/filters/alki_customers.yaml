@@ -1,6 +1,6 @@
 customer_values: ["ARGALYS", "LES MIRACULEUX", "MINCI DELICE", "NUTRAVANCE"]
 
-filters:
+builder_arguments:
   CUSTOMER: ${data.filters.customer_values}
   _measurement: [customer_quantity]
   _field: ["QUANTITY"]

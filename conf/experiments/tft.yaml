@@ -7,7 +7,6 @@ defaults:
 
 checkpoint:
   model_name: model_tft
-  work_dir: ./
   file_name: null
 
 mape:
@@ -29,7 +28,11 @@ model:
     transformer:
       _target_: darts.dataprocessing.transformers.Scaler
   random_state: 42
+  model_name: ${checkpoint.model_name}
+  work_dir: ${checkpoint.work_dir}
+  save_checkpoints: ${checkpoint.save_checkpoints}
   log_tensorboard: True
+  nr_epochs_val_period: 5
   torch_metrics:
     ${mape}
   optimizer_kwargs:

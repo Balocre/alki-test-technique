@@ -28,7 +28,7 @@ def train(cfg: DictConfig):
             print("Using untrained model")
 
     flux_query_filters = list()
-    for key, values in cfg.data.filters.items():
+    for key, values in cfg.data.filters.builder_arguments.items():
         flux_query_filters.append(build_piped_flux_filter(key, values))
 
     data_df = get_df_from_influxdb(
@@ -41,7 +41,7 @@ def train(cfg: DictConfig):
         stop="now()",
     )
 
-    fit(model, data_df, epochs=cfg.train.epochs)
+    fit(model, data_df, epochs=cfg.train_parameters.epochs)
 
 
 @hydra.main(config_path="./conf/", config_name="train", version_base="1.3")

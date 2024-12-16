@@ -1,2 +1,6 @@
-parameters:
+train_parameters:
   epochs: 600
+
+checkpoint:
+  save_checkpoints: True
+  work_dir: ./training_artifacts/
