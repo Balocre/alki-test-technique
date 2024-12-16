@@ -1,0 +1,5 @@
+mode: ???
+
+checkpoint:
+  save_checkpoints: True
+  work_dir: ${hydra:run.dir}

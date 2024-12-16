@@ -5,21 +5,34 @@ defaults:
   - /data/filters/alki_customers
   - /losses/quantile_regression
 
+train_parameters:
+  epochs: 600
+
+test_parameters:
+  n: 23
+  test_size: 0.2
+  num_samples: 100
+
 checkpoint:
   model_name: model_tft
   file_name: null
 
-metrics:
+torch_metrics:
   _target_: torchmetrics.MetricCollection
   metrics:
     - _target_: torchmetrics.MeanAbsolutePercentageError
 
-early_stopping:
-  _target_: pytorch_lightning.callbacks.EarlyStopping
-  monitor: val_MeanAbsolutePercentageError
-  patience: 50
-  min_delta: 0.05
-  mode: min
+pl_trainer_kwargs:
+  callbacks:
+    - _target_: pytorch_lightning.callbacks.EarlyStopping
+      monitor: val_MeanAbsolutePercentageError
+      patience: 50
+      min_delta: 0.005
+      verbose: True
+      mode: min
+    - _target_: pytorch_lightning.callbacks.ModelCheckpoint
+      monitor: val_MeanAbsolutePercentageError
+      verbose: true
 
 model:
   batch_size: 512
@@ -34,11 +47,10 @@ model:
   work_dir: ${checkpoint.work_dir}
   save_checkpoints: ${checkpoint.save_checkpoints}
   log_tensorboard: True
-  nr_epochs_val_period: 5
+  # nr_epochs_val_period: 5
   torch_metrics:
-    ${metrics}
+    ${torch_metrics}
   optimizer_kwargs:
     lr: 0.001
   pl_trainer_kwargs:
-    callbacks:
-      - ${early_stopping}
+    ${pl_trainer_kwargs}
