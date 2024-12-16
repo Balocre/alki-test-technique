@@ -28,15 +28,15 @@ def fit(
     for i, series in enumerate(series_group):
         series_group[i] = static_covariate_transformer.fit_transform(series)
 
-    # fill missing values as averaged values
-    if fill_missing_values:
-        transformer_filler = MissingValuesFiller()
-        series_group = transformer_filler.transform(series_group)
-
     # builds sample weights
     sample_weight_group = list()
     for series in series_group:
         sample_weight_group.append(build_sample_weights(series, missing_sample_weight))
+
+    # fill missing values as averaged values
+    if fill_missing_values:
+        transformer_filler = MissingValuesFiller()
+        series_group = transformer_filler.transform(series_group)
 
     input_size = model.model_params.get("input_chunk_length", None)
     horizon = model.model_params.get("output_chunk_length", None)
