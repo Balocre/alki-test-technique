@@ -1,5 +1,7 @@
+import matplotlib.pyplot as plt
 from darts.dataprocessing.transformers import StaticCovariatesTransformer
 from darts.dataprocessing.transformers.missing_values_filler import MissingValuesFiller
+from darts.metrics.metrics import mape
 from darts.models.forecasting.forecasting_model import GlobalForecastingModel
 from darts.utils.model_selection import train_test_split
 
@@ -16,8 +18,7 @@ def fit(
 ):
     # encode static covariates (customer names) as int
     static_covariate_transformer = StaticCovariatesTransformer()
-    for i, series in enumerate(series_group):
-        series_group[i] = static_covariate_transformer.fit_transform(series)
+    series_group = static_covariate_transformer.fit_transform(series_group)
 
     # builds sample weights
     sample_weight_group = list()
@@ -58,6 +59,38 @@ def fit(
         series_train,
         val_series=series_val,
         verbose=True,
+        epochs=epochs,
         sample_weight=sample_weight_train,
         val_sample_weight=sample_weight_val,
     )
+
+
+def eval(model, series, series_val, n, num_samples):
+    # encode static covariates (customer names) as int
+    static_covariate_transformer = StaticCovariatesTransformer()
+
+    series = static_covariate_transformer.fit_transform(series)
+    series_val = static_covariate_transformer.fit_transform(series_val)
+
+    pred_series = model.predict(
+        n=n,
+        num_samples=num_samples,
+    )
+
+    figsize = (16, 6)
+    lowest_q, low_q, high_q, highest_q = 0.01, 0.1, 0.9, 0.99
+    label_q_outer = f"{int(lowest_q * 100)}-{int(highest_q * 100)}th percentiles"
+    label_q_inner = f"{int(low_q * 100)}-{int(high_q * 100)}th percentiles"
+
+    # plot actual series
+    plt.figure(figsize=figsize)
+    series_val.plot(label="actual")
+
+    # plot prediction with quantile ranges
+    pred_series.plot(
+        low_quantile=lowest_q, high_quantile=highest_q, label=label_q_outer
+    )
+    pred_series.plot(low_quantile=low_q, high_quantile=high_q, label=label_q_inner)
+
+    plt.title("MAPE: {:.2f}%".format(mape(series_val, pred_series)))
+    plt.legend()
