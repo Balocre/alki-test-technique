@@ -1,6 +1,0 @@
-train_parameters:
-  epochs: 600
-
-checkpoint:
-  save_checkpoints: True
-  work_dir: ${hydra:run.dir}
