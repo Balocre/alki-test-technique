@@ -17,17 +17,20 @@ BUCKET = "technical-test"
 
 
 def _load_model_from_cfg(cfg: DictConfig):
-    model = instantiate(cfg.model)
-
-    # load model from checkpoint for finetuning
-    model_name = cfg.checkpoint.model_name
-    work_dir = cfg.checkpoint.work_dir
-    file_name = cfg.checkpoint.file_name
-    if model_name is not None:
-        try:
-            model.load_from_checkpoint(model_name, work_dir, file_name)
-        except ValueError:
-            print("Using untrained model")
+    try:
+        model_cls = hydra.utils.get_class(cfg.model._target_)
+        # load model from checkpoint for finetuning
+        model_name = cfg.checkpoint.model_name
+        work_dir = cfg.checkpoint.work_dir
+        file_name = cfg.checkpoint.file_name
+        if model_name is not None:
+            try:
+                model = model_cls.load_from_checkpoint(model_name, work_dir, file_name)
+            except ValueError:
+                print("Using untrained model")
+    except ValueError as e:
+        print(e)
+        model = instantiate(cfg.model)
 
     return model
 
