@@ -3,4 +3,4 @@ train_parameters:
 
 checkpoint:
   save_checkpoints: True
-  work_dir: ./training_artifacts/
+  work_dir: ${hydra:run.dir}
