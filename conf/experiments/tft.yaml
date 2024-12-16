@@ -9,8 +9,10 @@ checkpoint:
   model_name: model_tft
   file_name: null
 
-mape:
-  _target_: torchmetrics.MeanAbsolutePercentageError
+metrics:
+  _target_: torchmetrics.MetricCollection
+  metrics:
+    - _target_: torchmetrics.MeanAbsolutePercentageError
 
 early_stopping:
   _target_: pytorch_lightning.callbacks.EarlyStopping
@@ -34,7 +36,7 @@ model:
   log_tensorboard: True
   nr_epochs_val_period: 5
   torch_metrics:
-    ${mape}
+    ${metrics}
   optimizer_kwargs:
     lr: 0.001
   pl_trainer_kwargs:
