@@ -1,4 +1,3 @@
-from darts import TimeSeries
 from darts.dataprocessing.transformers import StaticCovariatesTransformer
 from darts.dataprocessing.transformers.missing_values_filler import MissingValuesFiller
 from darts.models.forecasting.forecasting_model import GlobalForecastingModel
@@ -9,20 +8,12 @@ from .utils import build_sample_weights
 
 def fit(
     model,
-    data_df,
+    series_group,
     epochs,
     missing_sample_weight=0.05,
     fill_missing_values=True,
     test_size=0.2,
 ):
-    series_group = TimeSeries.from_group_dataframe(
-        data_df,
-        group_cols="CUSTOMER",
-        value_cols="QUANTITY",
-        fill_missing_dates=True,
-        freq="D",
-    )
-
     # encode static covariates (customer names) as int
     static_covariate_transformer = StaticCovariatesTransformer()
     for i, series in enumerate(series_group):
@@ -70,5 +61,3 @@ def fit(
         sample_weight=sample_weight_train,
         val_sample_weight=sample_weight_val,
     )
-
-    model.fit(series_group, epochs=epochs)

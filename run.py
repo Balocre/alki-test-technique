@@ -1,6 +1,7 @@
 import os
 
 import hydra
+from darts import TimeSeries
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 
@@ -41,7 +42,19 @@ def train(cfg: DictConfig):
         stop="now()",
     )
 
-    fit(model, data_df, epochs=cfg.train_parameters.epochs)
+    series = TimeSeries.from_group_dataframe(
+        data_df,
+        group_cols="CUSTOMER",
+        value_cols="QUANTITY",
+        fill_missing_dates=True,
+        freq="D",
+    )
+
+    fit(model, series, epochs=cfg.train_parameters.epochs)
+
+
+def eval():
+    pass
 
 
 @hydra.main(config_path="./conf/", config_name="train", version_base="1.3")
