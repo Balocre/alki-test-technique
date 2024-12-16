@@ -2,15 +2,13 @@
 
 defaults:
   - /models/tft
+  - /data/filters/alki_customers
   - /losses/quantile_regression
 
 checkpoint:
   model_name: model_tft
   work_dir: ./
   file_name: null
-
-train:
-  epochs: 600
 
 mape:
   _target_: torchmetrics.MeanAbsolutePercentageError
