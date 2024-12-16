@@ -17,6 +17,16 @@ BUCKET = "technical-test"
 def train(cfg: DictConfig):
     model = instantiate(cfg.model)
 
+    # load model from checkpoint for finetuning
+    model_name = cfg.checkpoint.model_name
+    work_dir = cfg.checkpoint.work_dir
+    file_name = cfg.checkpoint.file_name
+    if model_name is not None:
+        try:
+            model.load_from_checkpoint(model_name, work_dir, file_name)
+        except ValueError:
+            print("Using untrained model")
+
     flux_query_filters = list()
     for key, values in cfg.data.filters.items():
         flux_query_filters.append(build_piped_flux_filter(key, values))

@@ -4,6 +4,11 @@ defaults:
   - /models/tft
   - /losses/quantile_regression
 
+checkpoint:
+  model_name: model_tft
+  work_dir: ./
+  file_name: null
+
 train:
   epochs: 600
 
