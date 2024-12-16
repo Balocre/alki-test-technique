@@ -1,6 +1,8 @@
 from darts import TimeSeries
 from darts.dataprocessing.transformers import StaticCovariatesTransformer
 from darts.dataprocessing.transformers.missing_values_filler import MissingValuesFiller
+from darts.models.forecasting.forecasting_model import GlobalForecastingModel
+from darts.utils.model_selection import train_test_split
 
 from .utils import build_sample_weights
 
@@ -9,14 +11,10 @@ def fit(
     model,
     data_df,
     epochs,
-    checkpoint_path=None,
     missing_sample_weight=0.05,
     fill_missing_values=True,
     training_cutoff=0.8,
 ):
-    if checkpoint_path is not None:
-        model.load(checkpoint_path)
-
     series_group = TimeSeries.from_group_dataframe(
         data_df,
         group_cols="CUSTOMER",
@@ -25,31 +23,45 @@ def fit(
         freq="D",
     )
 
+    # encode static covariates (customer names) as int
     static_covariate_transformer = StaticCovariatesTransformer()
     for i, series in enumerate(series_group):
         series_group[i] = static_covariate_transformer.fit_transform(series)
 
+    # fill missing values as averaged values
     if fill_missing_values:
         transformer_filler = MissingValuesFiller()
         series_group = transformer_filler.transform(series_group)
 
+    # builds sample weights
     sample_weight_group = list()
     for series in series_group:
         sample_weight_group.append(build_sample_weights(series, missing_sample_weight))
 
-    series_train = list()
-    series_val = list()
-    for series in series_group:
-        t_train, t_val = series.split_after(training_cutoff)
-        series_train.append(t_train)
-        series_val.append(t_val)
+    input_size = model.model_params.get("input_chunk_length", None)
+    horizon = model.model_params.get("output_chunk_length", None)
 
-    sample_weight_train = list()
-    sample_weight_val = list()
-    for sample_weight in sample_weight_group:
-        t_train, t_val = sample_weight.split_after(training_cutoff)
-        sample_weight_train.append(t_train)
-        sample_weight_val.append(t_val)
+    series_train, series_val = train_test_split(
+        series_group,
+        test_size=0.2,
+        axis=1,
+        input_size=input_size,
+        horizon=horizon,
+        vertical_split_type="model-aware",
+    )
+
+    sample_weight_train, sample_weight_val = train_test_split(
+        sample_weight_group,
+        test_size=0.2,
+        axis=1,
+        input_size=input_size,
+        horizon=horizon,
+        vertical_split_type="model-aware",
+    )
+
+    # can be trained on multiple timeseries at once
+    if isinstance(model, GlobalForecastingModel):
+        pass
 
     model.fit(
         series_train,
