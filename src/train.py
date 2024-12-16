@@ -72,8 +72,12 @@ def eval(model, series, series_val, n, num_samples):
     series = static_covariate_transformer.fit_transform(series)
     series_val = static_covariate_transformer.fit_transform(series_val)
 
-    pred_series = model.predict(
+    transformer_filler = MissingValuesFiller()
+    series = transformer_filler.transform(series)
+
+    series_pred = model.predict(
         n=n,
+        series=series,
         num_samples=num_samples,
     )
 
@@ -82,15 +86,17 @@ def eval(model, series, series_val, n, num_samples):
     label_q_outer = f"{int(lowest_q * 100)}-{int(highest_q * 100)}th percentiles"
     label_q_inner = f"{int(low_q * 100)}-{int(high_q * 100)}th percentiles"
 
-    # plot actual series
-    plt.figure(figsize=figsize)
-    series_val.plot(label="actual")
-
     # plot prediction with quantile ranges
-    pred_series.plot(
-        low_quantile=lowest_q, high_quantile=highest_q, label=label_q_outer
-    )
-    pred_series.plot(low_quantile=low_q, high_quantile=high_q, label=label_q_inner)
+    metric = mape(series_val, series_pred)
 
-    plt.title("MAPE: {:.2f}%".format(mape(series_val, pred_series)))
-    plt.legend()
+    for sp, sv, m in zip(series_pred, series_val, metric):
+        # plot actual series
+        plt.figure(figsize=figsize)
+        sv.plot(label="actual")
+
+        sp.plot(low_quantile=lowest_q, high_quantile=highest_q, label=label_q_outer)
+        sp.plot(low_quantile=low_q, high_quantile=high_q, label=label_q_inner)
+
+        plt.title("MAPE: {:.2f}%".format(m))
+        plt.legend()
+        plt.show()
