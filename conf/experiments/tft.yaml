@@ -7,6 +7,7 @@ defaults:
 
 train_parameters:
   epochs: 600
+  random_state: 42
 
 test_parameters:
   n: 23
@@ -26,7 +27,7 @@ pl_trainer_kwargs:
   callbacks:
     - _target_: pytorch_lightning.callbacks.EarlyStopping
       monitor: val_MeanAbsolutePercentageError
-      patience: 50
+      patience: 150
       min_delta: 0.005
       verbose: True
       mode: min
@@ -42,7 +43,7 @@ model:
     datetime_attribute: {future: [dayofweek]}
     transformer:
       _target_: darts.dataprocessing.transformers.Scaler
-  random_state: 42
+  random_state: ${train_parameters.random_state}
   model_name: ${checkpoint.model_name}
   work_dir: ${checkpoint.work_dir}
   save_checkpoints: ${checkpoint.save_checkpoints}
