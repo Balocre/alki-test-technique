@@ -36,9 +36,9 @@ pour charger les données du fichier train.
 ## Export des variables d'environnement
 
 Afin de communiquer avec InfluxDB, vous aurez besoin d'exporter quelques variables d'environnement :
- - INFLUXDB_V2_HOST : contenant l'adresse du serveur (http://localhost:8086 par défaut)
- - INFLUXDB_V2_ORG : "alki" par défaut ou toute autre valeur spécifiée dans le setup du Docker compose
- - INFLUXDB_V2_TOKEN: la valeur du token défini en secret pour le Docker compose dans le fichier `.env.influxdb2-admin-token`.
+ - `INFLUXDB_V2_URL` : contenant l'adresse du serveur (http://localhost:8086 par défaut)
+ - `INFLUXDB_V2_ORG` : "alki" par défaut ou toute autre valeur spécifiée dans le setup du Docker compose
+ - `INFLUXDB_V2_TOKEN` : la valeur du token défini en secret pour le Docker compose dans le fichier `.env.influxdb2-admin-token`.
 
 
 ## Entrainement d'un modèle TFT
