@@ -18,6 +18,12 @@ Si tout s'est déroulé normalement, vous devriez avoir accès à un dashboard �
 suivante : `http://localhost:8086`.
 
 
+# Installation des requirements
+
+Un fichier `requirements.txt` est fourni à la racine du projet, vous pouvez installer
+les dépendences python avec la commande `pip install -r requirements.txt`.
+
+
 ## Chargement du csv train dans InfluxDB
 
 Pour charger les données d'entrainement dans InfluxDB vous diposez d'un script dans
@@ -27,7 +33,7 @@ Vous pouvez l'appeler avec la commande suivante : `python scripts/import_alki_cs
 pour charger les données du fichier train.
 
 
-## Export des variables d'environnement 
+## Export des variables d'environnement
 
 Afin de communiquer avec InfluxDB, vous aurez besoin d'exporter quelques variables d'environnement :
  - INFLUXDB_V2_HOST : contenant l'adresse du serveur (http://localhost:8086 par défaut)
