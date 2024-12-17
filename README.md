@@ -177,3 +177,16 @@ exemple : `python run.py mode=train +experiments=tft model.hidden_size=128 model
 
 Pout finetuner un modèle il suffit de lancer la procédure d'entrainement en spécifiant
 le nom du modèle et le dossier d'un checkpoint préalablement sauvegardé.
+
+Par exemple pour reprendre l'entrainement du modèle précédement entrainé il suffit de
+lancer la commande `python run.py mode=train +experiments=tft checkpoint.work_dir=outputs/64_lstm_3`.
+
+
+## Prediction
+
+De même que pour l'eval et le fine-tuning il suffit d'appeler le script `run.py` avec
+`mode` mis en "predict" et de spécifier le dossier du checkpoint du modèle à utiliser
+avec la variable `checkpoint.work_dir`.
+
+Par exemple pour prédire avec le modèle entrainé précédement il suffit de lancer la
+commande ` python run.py mode=predict +experiments=tft checkpoint.work_dir=outputs/64_lstm_3`
