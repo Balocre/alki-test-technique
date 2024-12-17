@@ -7,6 +7,7 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig
 
 from src.data import build_piped_flux_filter, get_df_from_influxdb
+from src.predict import infer
 from src.train import eval, fit
 
 CLIENT_HOST = os.getenv("INFLUXDB_V2_URL")
@@ -106,14 +107,43 @@ def test(cfg):
     eval(model, series, series_val, n, num_samples)
 
 
+def predict(cfg: DictConfig):
+    model = _load_model_from_cfg(cfg)
+
+    flux_filters = _build_flux_filter_from_cfg(cfg)
+
+    data_df = get_df_from_influxdb(
+        bucket=BUCKET,
+        influxdb_host=CLIENT_HOST,
+        influxdb_org=CLIENT_ORG,
+        influxdb_token=CLIENT_TOKEN,
+        flux_query_filters=flux_filters,
+        start="-8y",
+        stop="now()",
+    )
+
+    series = TimeSeries.from_group_dataframe(
+        data_df,
+        group_cols="CUSTOMER",
+        value_cols="QUANTITY",
+        fill_missing_dates=True,
+        freq="D",
+    )
+
+    infer(model, series, n=23)
+
+
 @hydra.main(config_path="./conf/", config_name="run", version_base="1.3")
 def main(cfg: DictConfig):
     if cfg.mode == "train":
         print("Launching train")
         train(cfg)
-    else:
+    elif cfg.mode == "test":
         print("Testing model")
         test(cfg)
+    elif cfg.mode == "predict":
+        print("Predicting values")
+        predict(cfg)
 
 
 if __name__ == "__main__":
