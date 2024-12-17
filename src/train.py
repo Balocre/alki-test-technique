@@ -65,7 +65,7 @@ def fit(
     )
 
 
-def eval(model, series, series_val, n, num_samples, backtest=True):
+def eval(model, series, series_val, n, num_samples, backtest=False):
     # encode static covariates (customer names) as int
     static_covariate_transformer = StaticCovariatesTransformer()
 
