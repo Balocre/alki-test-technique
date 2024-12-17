@@ -2,7 +2,7 @@
 
 ## Démarage de InfluxDB
 
-L'instance de InfluxDB utilisée est géré grâce au fichier Docker compose résidant à la
+L'instance de InfluxDB utilisée est gérée grâce au fichier Docker compose résidant à la
 racine du projet.
 
 Avant de démarrer le serveur il faut définir 3 fichier contenant les différants secrets
@@ -27,7 +27,15 @@ Vous pouvez l'appeler avec la commande suivante : `python scripts/import_alki_cs
 pour charger les données du fichier train.
 
 
-# Entrainement d'un modèle TFT
+## Export des variables d'environnement 
+
+Afin de communiquer avec InfluxDB, vous aurez besoin d'exporter quelques variables d'environnement :
+ - INFLUXDB_V2_HOST : contenant l'adresse du serveur (http://localhost:8086 par défaut)
+ - INFLUXDB_V2_ORG : "alki" par défaut ou toute autre valeur spécifiée dans le setup du Docker compose
+ - INFLUXDB_V2_TOKEN: la valeur du token défini en secret pour le Docker compose dans le fichier `.env.influxdb2-admin-token`.
+
+
+## Entrainement d'un modèle TFT
 
 Pour lancer l'entrainement d'un modèle TFT il vous faudra utiliser le point dentrée
 `run.py`.
